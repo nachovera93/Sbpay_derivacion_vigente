@@ -1,0 +1,61 @@
+version: "2.0"
+stories:
+
+  - story: saludar
+    steps:
+      - intent: saludos
+      - action: action_hello
+      - or:
+        - intent: negacion
+        - intent: no_soy_persona
+      - checkpoint: check_no_es
+     
+  - story: No soy la persona 1
+    steps:
+      - checkpoint: check_no_es
+      - action: action_conoce
+      - intent: negacion
+      - action: utter_disculpe_molestia
+
+  - story: No soy la persona 2
+    steps:
+      - checkpoint: check_no_es
+      - action: action_conoce
+      - intent: afirmacion
+      - action: utter_si_conoce
+      - intent: afirmacion
+      - action: utter_despedida
+ 
+
+  - story: saludar 2 
+    steps:
+      - intent: saludos
+      - action: action_hello
+      - intent: afirmacion 
+      - action: action_ask_question
+      - checkpoint: check_si_es
+
+  - story: comunicar ejecutivo 
+    steps:
+      - checkpoint: check_si_es
+      - intent: afirmacion
+      - action: action_question_pay
+      - intent: afirmacion
+      - action: action_si_realizar_pago
+
+  - story: Si soy la persona 
+    steps:
+      - checkpoint: check_si_es
+      - intent: negacion
+      - action: action_comunicar_ejecutivo
+
+  - story: Si soy la persona 2
+    steps:
+      - checkpoint: check_si_es
+      - intent: negacion
+      - action: action_question_pay
+      - intent: negacion
+      - action: utter_negación_pago
+      - intent: negacion
+      - action: action_receive_reason
+      - action: action_good_bye

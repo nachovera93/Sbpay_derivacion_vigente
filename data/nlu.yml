@@ -1,0 +1,67 @@
+version: "2.0"
+nlu:
+- intent: saludos
+  examples: |
+    - hola
+    - ola
+    - alo
+    - que tal?
+    - Hola
+    - Holaaaaaaaaaa
+    - holaaaaaaa
+    - alooooooo
+    - olaaa
+
+- intent: despedida
+  examples: |
+    - adios
+    - chao
+    - nos vemos
+    - xao
+    - arioz
+
+- intent: dame_hora
+  examples: |
+    - me puedes dar la hora
+    - dame la hora
+    - que hora es
+
+- intent: negacion
+  examples: |
+    - no
+    - no tengo trabajo 
+    - estoy cesante 
+    - no tengo plata
+    - estoy enfermo
+    - no he usado esa autopista
+    - no tengo auto
+    - vendí el auto
+    - no puedo pagar
+    - no quiero pagar
+    - Ya pagué
+
+- intent: afirmacion
+  examples: |
+    - si
+    - digame
+    - si con el
+    - positivo
+    - si soy
+    - sip
+    - ok
+
+- intent: no_soy_persona
+  examples: |
+    - no está aca
+    - no está
+    - negativo
+    - no soy
+    - nop
+
+- intent: out_of_scope
+  examples: |
+    - n
+    - s
+    - asdas
+
+

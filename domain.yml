@@ -1,0 +1,49 @@
+version: "2.0"
+
+intents:
+  - saludos
+  - despedida
+  - dame_hora
+  - afirmacion
+  - negacion
+  - no_soy_persona
+  - out_of_scope
+  
+
+slots:
+  Reason:
+    type: text
+
+responses:
+  utter_default:
+    - text: "Disculpe, no logré escuchar ¿Sería tan amable de confirmar de repetir?"
+  utter_disculpe_molestia:
+    - text: "Disculpe la molestia, que tenga un buen día"
+  utter_si_conoce:
+    - text: "Podría comentarle que tenemos información importante y que nos puede encontrar en www.sicc.cl o llamando al 223658000"
+  utter_negación_pago:
+    - text: ¿Pordría indicarnos el motivo?
+  utter_despedida:
+    - text: Muchas gracias por su tiempo, adiós.
+  
+
+
+
+actions:
+  - action_ask_question
+  - action_greet_timeofday
+  - action_conoce
+  - action_get_fecha_vencimiento
+  - action_si_realizar_pago
+  - action_receive_reason
+  - action_say_reason
+  - action_good_bye
+  - action_hello
+  - action_comunicar_ejecutivo
+
+session_config:
+  session_expiration_time: 60  # value in minutes
+  carry_over_slots_to_new_session: true
+
+
+
