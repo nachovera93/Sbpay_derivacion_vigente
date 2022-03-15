@@ -136,18 +136,37 @@ rules:
       - intent: me_repite
       - action: action_donde
 
-
-  - rule: me repite 14
+  - rule: me repite 13
     steps:
       - action: action_donde2
       - intent: me_repite
       - action: action_donde2
+
+  - rule: me repite 13
+    steps:
+      - action: action_donde3
+      - intent: me_repite
+      - action: action_donde3
+
+  - rule: me repite 13
+    steps:
+      - action: action_monto2
+      - intent: me_repite
+      - action: action_monto2
+
+
 
   - rule: me repite 15
     steps:
       - action: action_fecha
       - intent: me_repite
       - action: action_fecha
+
+   - rule: me repite 15
+    steps:
+      - action: action_fecha2
+      - intent: me_repite
+      - action: action_fecha2
   
   - rule: me repite 16
     steps:
@@ -162,13 +181,33 @@ rules:
       - intent: que_fecha
       - action: action_fecha
 
+  - rule: preguntar fecha 2
+    steps:
+      - action: action_ask_question
+      - intent: que_fecha2
+
+  - rule: preguntar fecha 3
+    steps:
+      - action: action_no_derivado
+      - intent: que_fecha3
+      
 
   - rule: pregunta monto
     steps:
       - intent: preguntar_monto
       - action: action_monto
 
+  - rule: preguntar monto 2
+    steps:
+      - action: action_ask_question
+      - intent: preguntar_monto
+      - action: action_monto2
 
+  - rule: preguntar monto 2
+    steps:
+      - action: action_no_derivado
+      - intent: preguntar_monto
+      - action: action_monto3
 
   - rule: donde 1
     steps:
@@ -196,6 +235,12 @@ rules:
       - intent: de_donde
       - action: action_donde
       - action: utter_negación_pago
+
+  - rule: donde 4
+    steps:
+      - action: action_no_derivado
+      - intent: de_donde
+      - action: action_donde3
       
       
   - rule: donde 3

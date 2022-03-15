@@ -370,12 +370,24 @@ class ActionMonto(Action):
         uniqueid = tracker.sender_id
         #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
         Querys(uniqueid)
+        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos.')
+        return []
+
+class ActionMonto(Action):
+    def name(self):
+        return "action_monto2"
+
+    def run(self, dispatcher, tracker, domain):
+        global uniqueid
+        uniqueid = tracker.sender_id
+        #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
+        Querys(uniqueid)
         dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
         return []
 
 class ActionMonto2(Action):
     def name(self):
-        return "action_monto2"
+        return "action_monto3"
 
     def run(self, dispatcher, tracker, domain):
         global uniqueid
@@ -394,7 +406,15 @@ class FechaVencimiento(Action):
         global uniqueid
         uniqueid = tracker.sender_id
         Querys(uniqueid)
-        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, esea comunicarse con un ejecutivo para que le ayude?')
+        today_date = date.today()
+        td = timedelta(5)
+        fechaPago=(today_date + td)
+        print("Fecha de Pago: ",fechaPago)
+        dia = (today_date + td).day
+        mes = (today_date + td).month
+        anio = (today_date + td).year
+        nombreMes=month_converter(mes)
+        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días.')
         return []
 
 class FechaVencimiento2(Action):
@@ -405,6 +425,33 @@ class FechaVencimiento2(Action):
         global uniqueid
         uniqueid = tracker.sender_id
         Querys(uniqueid)
+        today_date = date.today()
+        td = timedelta(5)
+        fechaPago=(today_date + td)
+        print("Fecha de Pago: ",fechaPago)
+        dia = (today_date + td).day
+        mes = (today_date + td).month
+        anio = (today_date + td).year
+        nombreMes=month_converter(mes)
+        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
+        return []
+
+class FechaVencimiento3(Action):
+    def name(self):
+        return "action_fecha3"
+
+    def run(self, dispatcher, tracker, domain):
+        global uniqueid
+        uniqueid = tracker.sender_id
+        Querys(uniqueid)
+        today_date = date.today()
+        td = timedelta(5)
+        fechaPago=(today_date + td)
+        print("Fecha de Pago: ",fechaPago)
+        dia = (today_date + td).day
+        mes = (today_date + td).month
+        anio = (today_date + td).year
+        nombreMes=month_converter(mes)
         dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, puede realizar el pago dentro de 5 días?')
         return []
 
