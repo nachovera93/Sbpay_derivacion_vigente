@@ -111,7 +111,8 @@ actions:
 - action_slot_reset
 - action_guardar_razón
 - action_no_derivado
-- action_despedida
+- action_si_derivado
+
 forms:
   derivado_form:
     required_slots:

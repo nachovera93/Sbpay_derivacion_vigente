@@ -169,7 +169,7 @@ class ActionQuestion(Action):
 
 class ActionSiPaga(Action):
     def name(self):
-        return "action_si_paga"
+        return "action_si_derivado"
 
     def run(self, dispatcher, tracker, domain):
         #database = DataBase()
@@ -187,6 +187,20 @@ class ActionSiPaga(Action):
 
 class ActionNoPaga(Action):
     def name(self):
+        return "action_despedida"
+
+    def run(self, dispatcher, tracker, domain):
+        #database = DataBase()
+        global uniqueid
+        uniqueid = tracker.sender_id
+        #llamarDB(uniqueid)
+        motivo = tracker.get_slot("razon")
+        Updates(4,motivo,4,derivacion,fecha_com,"Si",uniqueid,rut)
+        dispatcher.utter_message(f"Muchas gracias por su tiempo {primernombre}. Para más información puede ingresar a triple doble b .sicc.cl. Que tenga un lindo dia! | EXIT")#{primernombre}
+        return []
+
+class ActionNoPaga(Action):
+    def name(self):
         return "action_no_derivado"
 
     def run(self, dispatcher, tracker, domain):
@@ -201,16 +215,28 @@ class ActionNoPaga(Action):
 
 class ActionNoPaga(Action):
     def name(self):
-        return "action_despedida"
+        return "action_si_paga"
 
     def run(self, dispatcher, tracker, domain):
         #database = DataBase()
         global uniqueid
         uniqueid = tracker.sender_id
         Querys(uniqueid)
-        motivo = tracker.get_slot("razon")
-        Updates(4,motivo,4,derivacion,fecha_com,"Si",uniqueid,rut)
-        dispatcher.utter_message(f"Muchas gracias por su tiempo {primernombre}. Su pago ha quedado agendado para el | EXIT")#{primernombre}
+        today_date = date.today()
+        td = timedelta(5)
+        global fechaPago
+        fechaPago=(today_date + td)
+        print("Fecha de Pago: ",fechaPago)
+        dia = (today_date + td).day
+        mes = (today_date + td).month
+        anio = (today_date + td).year
+        nombreMes=month_converter(mes)
+        print(f'Dia a pagar {(today_date + td).day}')
+        print(f'Mes a pagar {(today_date + td).month}')
+        print(f'Año a pagar {(today_date + td).year}') 
+        dispatcher.utter_message(f"Muchas gracias por su tiempo {primernombre}. Su pago ah quedado agendado para el {dia} de {nombreMes} del {anio}. Para mas información puede ingresar a triple doble b punto sicc punto cl | EXIT")
+        #progreso(3,motivo,3,derivacion,fechaPago,"Si",uniqueid) 
+        Updates(3,motivo,3,derivacion,fechaPago,"Si",uniqueid,rut) 
         return []
 
 
@@ -244,7 +270,7 @@ class ActionSiConoce(Action):
         uniqueid = tracker.sender_id
         Querys(uniqueid)
         Updates(5,motivo,compromiso_p,derivacion,fecha_com,entrega_info,uniqueid,rut)
-        dispatcher.utter_message(f'Podría comentarle que tenemos información importante y que nos puede encontrar en triple doble b .sic.cl o llamando al 223658000. Gracias | EXIT')
+        dispatcher.utter_message(f'Podría comentarle que tenemos información importante y que nos puede encontrar en triple doble b punto sic punto cl o llamando al 223658000. Gracias | EXIT')
         Updates(6,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid,rut)
         return []
 
@@ -310,7 +336,7 @@ class ActionDonde(Action):
         global uniqueid
         uniqueid = tracker.sender_id
         Querys(uniqueid)
-        dispatcher.utter_message(f'Nos estamos comunicando desde Comisión Ingresa')# {primernombre} podrá pagar dentro de los 3 proximos días')
+        dispatcher.utter_message(f'Nos estamos comunicando de sic por encargo de forum')# {primernombre} podrá pagar dentro de los 3 proximos días')
         return []
 
 class ActionDonde2(Action):
@@ -321,7 +347,7 @@ class ActionDonde2(Action):
         global uniqueid
         uniqueid = tracker.sender_id
         Querys(uniqueid)
-        dispatcher.utter_message(f'Estamos llamando desde Comisión Ingresa. {primernombre}, podrá pagar dentro de los 3 proximos días?')
+        dispatcher.utter_message(f'Estamos llamando de sic por encargo de forum. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
         return []
 
 class ActionMonto(Action):
@@ -333,7 +359,7 @@ class ActionMonto(Action):
         uniqueid = tracker.sender_id
         #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
         Querys(uniqueid)
-        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. {primernombre}, podrá pagar dentro de los 3 proximos días?')
+        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
         return []
 
 class FechaVencimiento(Action):
@@ -344,7 +370,7 @@ class FechaVencimiento(Action):
         global uniqueid
         uniqueid = tracker.sender_id
         Querys(uniqueid)
-        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 3 días. {primernombre}, cree que podrá cancelar?')
+        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, esea comunicarse con un ejecutivo para que le ayude?')
         return []
 
 

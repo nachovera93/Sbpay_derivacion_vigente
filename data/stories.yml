@@ -91,7 +91,7 @@ stories:
     - slot_was_set:
       - requested_slot: null
     - active_loop: null
-    - action: action_si_paga
+    - action: action_si_derivado
     - action: action_recibir_es_o_no
     - action: action_recibir_paga_o_no
     - action: action_restart2
@@ -170,7 +170,7 @@ stories:
       - requested_slot: null
     - active_loop: null
     - action: action_ask_question
-        - intent: negación
+    - intent: negación
       entities:
       - respuesta: no
     - action: derivado_form
@@ -225,7 +225,7 @@ stories:
       - requested_slot: null
     - active_loop: null
     - action: action_ask_question
-     - intent: negación
+    - intent: negación
       entities:
       - respuesta: no
     - action: derivado_form
