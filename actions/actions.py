@@ -350,6 +350,17 @@ class ActionDonde2(Action):
         dispatcher.utter_message(f'Estamos llamando de sic por encargo de forum. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
         return []
 
+class ActionDonde3(Action):
+    def name(self):
+        return "action_donde3"
+
+    def run(self, dispatcher, tracker, domain):
+        global uniqueid
+        uniqueid = tracker.sender_id
+        Querys(uniqueid)
+        dispatcher.utter_message(f'Estamos llamando de sic por encargo de forum. {primernombre}, puede realizar el pago dentro de 5 días?')
+        return []
+
 class ActionMonto(Action):
     def name(self):
         return "action_monto"
@@ -362,6 +373,19 @@ class ActionMonto(Action):
         dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
         return []
 
+class ActionMonto2(Action):
+    def name(self):
+        return "action_monto2"
+
+    def run(self, dispatcher, tracker, domain):
+        global uniqueid
+        uniqueid = tracker.sender_id
+        #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
+        Querys(uniqueid)
+        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. puede realizar el pago dentro de 5 días?')
+        return []
+
+
 class FechaVencimiento(Action):
     def name(self):
         return "action_fecha"
@@ -371,6 +395,17 @@ class FechaVencimiento(Action):
         uniqueid = tracker.sender_id
         Querys(uniqueid)
         dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, esea comunicarse con un ejecutivo para que le ayude?')
+        return []
+
+class FechaVencimiento2(Action):
+    def name(self):
+        return "action_fecha2"
+
+    def run(self, dispatcher, tracker, domain):
+        global uniqueid
+        uniqueid = tracker.sender_id
+        Querys(uniqueid)
+        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, puede realizar el pago dentro de 5 días?')
         return []
 
 
@@ -451,7 +486,11 @@ class ActionDarHora(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        dispatcher.utter_message(text=f"Son las {dt.datetime.now()}")
+        t = datetime.datetime.now()
+        global uniqueid
+        uniqueid = tracker.sender_id
+        Querys(uniqueid)
+        dispatcher.utter_message(text=f"{primernombre}, son las {t.hour} {t.minute} Horas")
 
         return []
 ###########################
