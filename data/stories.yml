@@ -230,6 +230,7 @@ stories:
     - intent: estoy_cesante_intent
       entities:
       - motivo: cesante
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
 
   - story: sin dinero
@@ -271,6 +272,7 @@ stories:
     - intent: sin_dinero_intent
       entities:
       - motivo: sin plata
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
 
   - story: sin razón
@@ -310,6 +312,7 @@ stories:
     - action: action_save_intent_paga_o_no
     - action: utter_no_paga
     - intent: negación
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
     
   - story: estoy enfermo
@@ -351,6 +354,7 @@ stories:
     - intent: estoy_enfermo_intent
       entities:
       - motivo: estoy enfermo
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
 
   - story: no puede
@@ -392,6 +396,7 @@ stories:
     - intent: no_puedo_intent
       entities:
       - motivo: no podré
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
   
   - story: no quiero
@@ -433,6 +438,7 @@ stories:
     - intent: no_quiero_intent
       entities:
       - motivo: no quiero
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
 
 
@@ -475,6 +481,7 @@ stories:
     - intent: ya_pagué_intent
       entities:
       - motivo: ya pague
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
 
 
@@ -517,6 +524,7 @@ stories:
     - intent: desconoce_seguro_intent
       entities:
       - motivo: no contrate seguro
+    - action: action_razon_no_pago
     - action: utter_ser_transferido
 
 

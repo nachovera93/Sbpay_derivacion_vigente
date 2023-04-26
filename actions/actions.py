@@ -278,20 +278,9 @@ class ActionConoceONo(Action):
         else:
            current_intent_razon = None
         
-        slots_to_update = [
-            "name",
-            "es_persona_correcta",
-            "conoce_o_no",
-            "fecha_vcto",
-            "fecha_pago",
-            "monto",
-            "paga_o_no",
-            "razon_no_pago",
-            "phone_number"
-        ]
-        updated_slots = {slot: tracker.slots.get(slot) or None for slot in slots_to_update}
+        
         print(f'razon_no_pago: {current_intent_razon}')
-
+        return [SlotSet("razon_no_pago", current_intent_razon)]
 
 class ActionSiPaga(Action):
     def name(self):
@@ -313,7 +302,18 @@ class ActionSiPaga(Action):
         current_intent = latest_message['intent']['name']
         
         # Imprimir el nombre de la intención
-        
+        slots_to_update = [
+            "name",
+            "es_persona_correcta",
+            "conoce_o_no",
+            "fecha_vcto",
+            "fecha_pago",
+            "monto",
+            "paga_o_no",
+            "razon_no_pago",
+            "phone_number"
+        ]
+        updated_slots = {slot: tracker.slots.get(slot) or None for slot in slots_to_update}
         
         print(f'current_intent: {current_intent}')
         print(f'name: {updated_slots["name"]}')
@@ -322,7 +322,7 @@ class ActionSiPaga(Action):
         print(f'fecha_vcto: {updated_slots["fecha_vcto"]}')
         print(f'monto: {updated_slots["monto"]}')
         print(f'paga_o_no: {updated_slots["paga_o_no"]}')
-        print(f'razon_no_pago: {current_intent_razon}')
+        print(f'razon_no_pago: {updated_slots["razon_no_pago"]}')
         print(f'derivado_o_no: {current_intent}')
         print(f'phone_number: {updated_slots["phone_number"]}')
         print(f'fecha_pago: {updated_slots["fecha_pago"]}')
@@ -344,14 +344,13 @@ class ActionSiPaga(Action):
                 "corta": "no",
                 "es_persona_correcta": updated_slots["es_persona_correcta"],
                 "conoce_o_no": updated_slots["conoce_o_no"],
-                "razon_no_pago": updated_slots["conoce_o_no"],
+                "razon_no_pago": updated_slots["razon_no_pago"],
                 "paga_o_no": updated_slots["paga_o_no"],
                 "name": updated_slots["name"],
                 "monto": updated_slots["monto"],
                 "fecha_vcto": updated_slots["fecha_vcto"],
                 "fecha_pago": updated_slots["fecha_pago"],
                 "phone_number": updated_slots["phone_number"],
-                "razon": current_intent_razon,
                 "created_at": datetime.datetime.now(),
                 "updated_at": datetime.datetime.now()
             }
@@ -372,7 +371,6 @@ class ActionSiPaga(Action):
         opcion_pago=None
         phone_number=None
         current_intent_razon=None
-
         return []
     
 

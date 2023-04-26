@@ -40,7 +40,7 @@ slots:
   derivado_o_no:
     type: text
     influence_conversation: true
-  razon:
+  razon_no_pago:
     type: text
     influence_conversation: true
   phone_number:
@@ -117,6 +117,7 @@ responses:
   utter_cuando:
   - text: la fecha es el {fecha_vcto}
 actions:
+- action_razon_no_pago
 - action_default_fallback
 - action_es_o_no
 - action_no_paga

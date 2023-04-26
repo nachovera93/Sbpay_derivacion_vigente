@@ -12,6 +12,7 @@ rules:
     - action: utter_ser_transferido
     - intent: afirmación
     - action: utter_tranfiere
+    - action: action_save_data
     - action: action_restart2
 
 
@@ -20,6 +21,7 @@ rules:
     - action: utter_ser_transferido
     - intent: negación
     - action: utter_no_tranfiere
+    - action: action_save_data
     - action: action_restart2
 
 
