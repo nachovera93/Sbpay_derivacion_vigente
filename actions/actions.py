@@ -242,11 +242,63 @@ class ActionConoceONo(Action):
         print(f'es_o_no_intent: {es_o_no_intent}')
 
 
+updated_slots=None
+current_intent_razon=None
+class ActionConoceONo(Action):
+    def name(self):
+        return "action_razon_no_pago"
+
+    def run(self, dispatcher, tracker, domain):
+        # Obtener la intención actual
+        latest_message = tracker.latest_message
+        current_intent_razon = latest_message['intent']['name']
+    
+        if isinstance(current_intent_razon, list):
+            current_intent_razon = current_intent_razon[0]
+        
+        print(f'current_intent_razon: {current_intent_razon}')
+        if(current_intent_razon=="sin_dinero_intent"):
+            current_intent_razon="Sin dinero"
+        elif(current_intent_razon=="estoy_cesante_intent"):
+            current_intent_razon="Cesante"
+        elif(current_intent_razon=="ya_pagué_intent"):
+            current_intent_razon="Ya cancelo"
+        elif(current_intent_razon=="estoy_enfermo_intent"):
+            current_intent_razon="Enfermo"
+        elif(current_intent_razon=="desconoce_seguro_intent"):
+            current_intent_razon="Desconoce seguro"
+        elif(current_intent_razon=="no_contrate_seguro_intent"):
+            current_intent_razon="No contrato seguro"
+        elif(current_intent_razon=="no_puedo_intent"):
+            current_intent_razon="No puede cancelar"
+        elif(current_intent_razon=="no_quiero_intent"):
+            current_intent_razon="No quiere cancelar"
+        elif(current_intent_razon=="negación"):
+            current_intent_razon="Sin razón"
+        else:
+           current_intent_razon = None
+        
+        slots_to_update = [
+            "name",
+            "es_persona_correcta",
+            "conoce_o_no",
+            "fecha_vcto",
+            "fecha_pago",
+            "monto",
+            "paga_o_no",
+            "razon_no_pago",
+            "phone_number"
+        ]
+        updated_slots = {slot: tracker.slots.get(slot) or None for slot in slots_to_update}
+        print(f'razon_no_pago: {current_intent_razon}')
+
+
 class ActionSiPaga(Action):
     def name(self):
         return "action_save_data"
 
     def run(self, dispatcher, tracker, domain):
+        global updated_slots, current_intent_razon
         mydb = myclient["haddacloud-v2"]
         mycol = mydb["voicebot-interactions"]
 
@@ -261,40 +313,7 @@ class ActionSiPaga(Action):
         current_intent = latest_message['intent']['name']
         
         # Imprimir el nombre de la intención
-        print(f'current_intent: {current_intent}')
-        if(current_intent=="sin_dinero_intent"):
-            current_intent="Sin dinero"
-        elif(current_intent=="estoy_cesante_intent"):
-            current_intent="Cesante"
-        elif(current_intent=="ya_pagué_intent"):
-            current_intent="Ya cancelo"
-        elif(current_intent=="estoy_enfermo_intent"):
-            current_intent="Enfermo"
-        elif(current_intent=="desconoce_seguro_intent"):
-            current_intent="Desconoce seguro"
-        elif(current_intent=="no_contrate_seguro_intent"):
-            current_intent="No contrato seguro"
-        elif(current_intent=="no_puedo_intent"):
-            current_intent="No puede cancelar"
-        elif(current_intent=="no_quiero_intent"):
-            current_intent="No quiere cancelar"
-        elif(current_intent=="negación"):
-            current_intent="Sin razón"
-        else:
-           current_intent = None
         
-        slots_to_update = [
-            "name",
-            "es_persona_correcta",
-            "conoce_o_no",
-            "fecha_vcto",
-            "fecha_pago",
-            "monto",
-            "paga_o_no",
-            "opcion_pago",
-            "phone_number"
-        ]
-        updated_slots = {slot: tracker.slots.get(slot) or None for slot in slots_to_update}
         
         print(f'current_intent: {current_intent}')
         print(f'name: {updated_slots["name"]}')
@@ -303,7 +322,8 @@ class ActionSiPaga(Action):
         print(f'fecha_vcto: {updated_slots["fecha_vcto"]}')
         print(f'monto: {updated_slots["monto"]}')
         print(f'paga_o_no: {updated_slots["paga_o_no"]}')
-        print(f'opcion_pago: {current_intent}')
+        print(f'razon_no_pago: {current_intent_razon}')
+        print(f'derivado_o_no: {current_intent}')
         print(f'phone_number: {updated_slots["phone_number"]}')
         print(f'fecha_pago: {updated_slots["fecha_pago"]}')
         
@@ -324,13 +344,14 @@ class ActionSiPaga(Action):
                 "corta": "no",
                 "es_persona_correcta": updated_slots["es_persona_correcta"],
                 "conoce_o_no": updated_slots["conoce_o_no"],
-                "opcion_pago": current_intent,
+                "razon_no_pago": updated_slots["conoce_o_no"],
                 "paga_o_no": updated_slots["paga_o_no"],
                 "name": updated_slots["name"],
                 "monto": updated_slots["monto"],
                 "fecha_vcto": updated_slots["fecha_vcto"],
                 "fecha_pago": updated_slots["fecha_pago"],
                 "phone_number": updated_slots["phone_number"],
+                "razon": current_intent_razon,
                 "created_at": datetime.datetime.now(),
                 "updated_at": datetime.datetime.now()
             }
@@ -350,6 +371,7 @@ class ActionSiPaga(Action):
         fecha_vcto=None
         opcion_pago=None
         phone_number=None
+        current_intent_razon=None
 
         return []
     
