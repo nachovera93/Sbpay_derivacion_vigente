@@ -1,13 +1,11 @@
 import datetime
+from typing import Text, List, Any, Dict, Optional
 from datetime import date, timedelta
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
-from rasa_sdk.events import SlotSet, ActionExecuted, EventType
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.forms import FormValidationAction
-from rasa_sdk.events import SlotSet
-from rasa_sdk.events import Restarted
-from rasa_sdk.events import AllSlotsReset
+from rasa_sdk.events import SlotSet, Restarted, AllSlotsReset
+import pymongo
 global SiPaga
 global NoPaga
 global motivo
@@ -26,65 +24,96 @@ fecha_com=None
 entrega_info=None
 
 
-import requests
-import json
-#url = "http://172.16.1.72/webservice-php-json/index.php"
+CONNECTION_STRING = "mongodb://172.16.1.41:27017,172.16.1.42:27017,172.16.1.43:27017/?replicaSet=haddacloud-rs&readPreference=secondaryPreferred"
+# CONNECTION_STRING = "mongodb://Admin:T3c4dmin1.@172.16.1.228:27017/data_warehouse?authSource=admin&readPreference=secondaryPreferred"
+myclient = pymongo.MongoClient(CONNECTION_STRING)
 
-url = "http://45.228.211.133:8080/webservice-php-json/index.php"
+organization_id=11
+
+class SetNameAction(Action):
+    def name(self):
+        return "set_name_action"
+
+    def run(self, dispatcher, tracker, domain):
+        #tracker.update(Restarted())
+        try:
+            splits = tracker.sender_id
+            customer_id,campaign_group,caller_id,phone_number = splits.split('|')
+            names = getNameByCustomerID(customer_id)
+            print(names)
+        except:
+            names = "Jose Miguel"
+        try: 
+            deuda_mora, fecha_vcto = getDebtsByCustomerID(customer_id, campaign_group)
+        except:
+            deuda_mora = "10000"
+            fecha_vcto = "01-01-1979"
+        try:
+            valueContesta = "si"
+            value_to_set = "si"
+            update_key_for_customer(customer_id, campaign_group, caller_id, valueContesta, value_to_set, names, phone_number, deuda_mora)
+        except Exception as e:
+            print("No se pudo actualizar el estado de corte")
+            print(f"Error: {e}")
+        print(f"deuda_mora : {deuda_mora}")
+        print(f"fecha_vcto : {fecha_vcto}")
+        print(f"phone_number : {phone_number}")
+        return [SlotSet("name", names),SlotSet("fecha_vcto", fecha_vcto), SlotSet("monto", deuda_mora),SlotSet("phone_number", phone_number)]
 
 
-def Querys(uniqueid):
-        payload={'action': 'get','id': f'{uniqueid}'}
-        files=[
-        ]
-        headers = {}
-        response = requests.request("POST", url, headers=headers, data=payload, files=files)
-        my_bytes_value = response.content
-        my_new_string = my_bytes_value.decode("utf-8").replace("'", '"')
-        data = json.loads(my_new_string)
-        s = json.dumps(data, indent=4, sort_keys=True)
-        print(s)
-        global nombre
-        global monto
-        global fechaVencimiento
-        global primernombre
-        global rut
-        global campania
-        nombre=data["data"][0]["address1"]
-        monto=data["data"][0]["address2"]
-        fechaVencimiento=data["data"][0]["city"]
-        primernombre=data["data"][0]["first_name"]
-        rut=data["data"][0]["vendor_lead_code"]
-        campania=data["data"][0]["campaign_name"]
 
-"""
-            "address1": "DANIELA HERNANDEZ",
-            "address2": "26799",
-            "campaign_name": "CLICK RECORDATORIO",
-            "city": "28-02-21",
-            "email": "",
-            "first_name": "DANIELA",
-            "lead_id": "134",
-            "list_name": "CLICK RECORDATORIO",
-            "owner": "78574270",
-            "vendor_lead_code": "170099999"
-"""
+def getNameByCustomerID(customer_id):
 
-def Updates(tipo_contacto,motivo,compromiso_p,derivacion,fecha_com,entrega_info,lead_id,rut):
-          payload={'action': 'update',
-          'tipo_contacto': f'{tipo_contacto}',
-          'motivo': f'{motivo}',
-          'compromiso_p': f'{compromiso_p}',
-          'derivacion': f'{derivacion}',
-          'fecha_com': f'{fecha_com}',
-          'entrega_info': f'{entrega_info}',
-          'lead_id': f'{lead_id}',
-          'rut': f'{rut}'}
-          files=[
-          ]
-          headers = {}
-          response = requests.request("POST", url, headers=headers, data=payload, files=files)
-          print(response.text)
+    mydb = myclient["haddacloud-v2"]
+    mycol = mydb["deudors"]
+
+    x = mycol.find_one({ 'organization_id': int(organization_id), 'customer_id': str(customer_id)  })
+
+    return x["nombre"]
+
+def getDebtsByCustomerID(customer_id, campaign_group):
+
+    mydb = myclient["haddacloud-v2"]
+    mycol = mydb["debts"]
+
+    x = mycol.find_one({  'organization_id': int(organization_id), 'customer_id': str(customer_id), 'group_campaign_id': int(campaign_group)  }, sort=[('updated_at', -1)])
+ 
+    return x["deuda_total"], x["fecha_vcto"]
+
+def update_key_for_customer(customer_id, campaign_group, caller_id, valueContesta, value_to_set, names, phone_number, deuda_mora):
+    mydb = myclient["haddacloud-v2"]
+    mycol = mydb["voicebot-interactions"]
+
+    result = mycol.update_one(
+        {
+            "customer_id": str(customer_id),
+            "organization_id": int(organization_id),
+            "group_campaign_id": int(campaign_group),
+            "caller_id": str(caller_id)
+        },
+        {
+            "$set": {
+                "contesta": valueContesta,
+                "corta": value_to_set,
+                "es_persona_correcta": None,
+                "conoce_o_no": None,
+                "opcion_pago": None,
+                "paga_o_no": None,
+                "name": names,
+                "monto": deuda_mora,
+                "fecha_vcto": None,
+                "fecha_pago": None,
+                "phone_number": phone_number,
+                "created_at": datetime.datetime.now(),
+                "updated_at": datetime.datetime.now()
+            }
+        },
+        upsert=True
+    )
+
+    print(f"Documentos modificados: {result.modified_count}")
+
+# Luego puedes llamar a la función de esta manera
 
 
 def month_converter(i):
@@ -92,192 +121,21 @@ def month_converter(i):
        return month[i-1]
 
 
-def ConverterDate():
-     global mes
-     global dia
-     global anio
-     global nombreMes 
-     dia=int(fechaVencimiento[0:2])
-     mes=int(fechaVencimiento[3:5])
-     anio=int(fechaVencimiento[6:10])
-     nombreMes=month_converter(mes)
-     print("dia: ",dia)
-     print("mes: ",nombreMes)
-     print("año: ",anio)
-
-
-class ActionHello(Action):
-    def name(self):
-        return "action_hello"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        #llamarDB(uniqueid)
-        Querys(uniqueid)
-        Updates(7,motivo,compromiso_p,derivacion,fecha_com,"No",uniqueid,rut)
-        t = datetime.datetime.now()
-        if 23 >= int(t.hour) >= 12:
-             dispatcher.utter_message(f'Buenas tardes, mi nombre es Gertrudis, ¿Me comunico con {nombre}?')
-        else:
-             dispatcher.utter_message(f'Buenos días, mi nombre es Gertrudis, ¿Me comunico con {nombre}?')
-           
-           
-        return []
-           
-
-
-class ActionHello2(Action):
-    def name(self):
-        return "action_hello2"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        #print("uniqueid: ", tracker.sender_id)
-        Querys(uniqueid)
-        Updates(7,motivo,compromiso_p,derivacion,fecha_com,"No",uniqueid,rut)
-        dispatcher.utter_message(f'Disculpe, me comunico con {primernombre}?')
-        return []
-
-
-###########################################################
-################### Pregunta Principal ####################
-###########################################################
-
-class ActionQuestion(Action):
-    def name(self):
-        return "action_ask_question"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        Updates(1,motivo,compromiso_p,derivacion,fecha_com,"No",uniqueid,rut)
-        ConverterDate()
-        dispatcher.utter_message(f'{primernombre}, estamos llamando de SICC por encargo de forum para recordarle que tienen una pendiente por {monto} y vencida el {dia} de {nombreMes} del {anio} asociado al contrato número . ¿Desea comunicarse con un ejecutivo para que le ayude?') 
-        Updates(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid,rut)
-           
-        return []
-       
-################################################
-################### Si paga ####################
-################################################
-
+        
+    
 class ActionSiPaga(Action):
-    def name(self):
-        return "action_si_derivado"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(f"{primernombre}, para una mejor atención por favor ingrese su rut. si termina en K, reemplácela por un cero. | DER")
-        Updates(3,motivo,3,derivacion,fecha_com,"Si",uniqueid,rut) 
-        return []
-
-
-################################################
-################### No paga ####################
-################################################
-
-class ActionNoPaga(Action):
-    def name(self):
-        return "action_despedida"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        #llamarDB(uniqueid)
-        motivo = tracker.get_slot("razon")
-        Updates(4,motivo,4,derivacion,fecha_com,"Si",uniqueid,rut)
-        dispatcher.utter_message(f"Muchas gracias por su tiempo {primernombre}. Para más información puede ingresar a triple doble b .sicc.cl. Que tenga un lindo dia! | EXIT")#{primernombre}
-        return []
-
-class ActionNoPaga(Action):
-    def name(self):
-        return "action_no_derivado"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        motivo = tracker.get_slot("razon")
-        Updates(4,motivo,4,derivacion,fecha_com,"Si",uniqueid,rut)
-        dispatcher.utter_message(f"Puede realizar el pago de su saldo pendiente dentro de los próximos días")#{primernombre}
-        return []
-
-class ActionNoPaga(Action):
     def name(self):
         return "action_si_paga"
 
     def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
+        
         today_date = date.today()
-        td = timedelta(5)
-        global fechaPago
-        fechaPago=(today_date + td)
+        td = timedelta(3)
+        fechaPago=str(today_date + td)
         print("Fecha de Pago: ",fechaPago)
-        dia = (today_date + td).day
-        mes = (today_date + td).month
-        anio = (today_date + td).year
-        nombreMes=month_converter(mes)
-        print(f'Dia a pagar {(today_date + td).day}')
-        print(f'Mes a pagar {(today_date + td).month}')
-        print(f'Año a pagar {(today_date + td).year}') 
-        dispatcher.utter_message(f"Muchas gracias por su tiempo {primernombre}. Su pago ah quedado agendado para el {dia} de {nombreMes} del {anio}. Para mas información puede ingresar a triple doble b punto sicc punto cl | EXIT")
-        #progreso(3,motivo,3,derivacion,fechaPago,"Si",uniqueid) 
-        Updates(3,motivo,3,derivacion,fechaPago,"Si",uniqueid,rut) 
-        return []
+        return [SlotSet("fecha_pago", fechaPago)]
 
 
-
-
-
-#####################################
-############ Action Si Conoce ##########
-#####################################
- 
-class ActionConoce0(Action):
-    def name(self):
-        return "action_conoce"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(f'Disculpe, usted conoce a {nombre}?')
-        return []
-
-
-class ActionSiConoce(Action):
-    def name(self):
-        return "action_si_conoce"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        Updates(5,motivo,compromiso_p,derivacion,fecha_com,entrega_info,uniqueid,rut)
-        dispatcher.utter_message(f'Podría comentarle que tenemos información importante y que nos puede encontrar en triple doble b punto sic punto cl o llamando al 223658000. Gracias | EXIT')
-        Updates(6,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid,rut)
-        return []
-
-
-###############################################
-################### Restart ###################
-###############################################
 
 class ActionRestart2(Action):
     """Resets the tracker to its initial state.
@@ -290,177 +148,13 @@ class ActionRestart2(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         return [Restarted()]
 
-class ActionSlotReset(Action):  
-    def name(self):         
-        return 'action_slot_reset'  
+class ActionSlotReset(Action):
+    def name(self):
+        return 'action_slot_reset'
     def run(self, dispatcher, tracker, domain):
         return[AllSlotsReset()]
 
 
-##########################
-########## Final #########
-##########################
-class Final(Action):
-    def name(self):   
-        return "action_final"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        #database.close()
-        dispatcher.utter_message("Exit")
-        return []
-
-
-###############################
-####### Preguntas Usuario #####
-###############################
-
-class ActionConoce(Action):
-    def name(self):
-        return "action_quien"
-
-    def run(self, dispatcher, tracker, domain):
-        #database = DataBase()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(f'Me comunico con {nombre}?')
-        return []
-
-class ActionDonde(Action):
-    def name(self):
-        return "action_donde"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(f'Nos estamos comunicando de sic por encargo de forum')# {primernombre} podrá pagar dentro de los 3 proximos días')
-        return []
-
-class ActionDonde2(Action):
-    def name(self):
-        return "action_donde2"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(f'Estamos llamando de sic por encargo de forum. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
-        return []
-
-class ActionDonde3(Action):
-    def name(self):
-        return "action_donde3"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(f'Estamos llamando de sic por encargo de forum. {primernombre}, puede realizar el pago dentro de 5 días?')
-        return []
-
-class ActionMonto(Action):
-    def name(self):
-        return "action_monto"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
-        Querys(uniqueid)
-        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos.')
-        return []
-
-class ActionMonto(Action):
-    def name(self):
-        return "action_monto2"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
-        Querys(uniqueid)
-        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
-        return []
-
-class ActionMonto2(Action):
-    def name(self):
-        return "action_monto3"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        #progreso(2,motivo,compromiso_p,derivacion,fecha_com,"Si",uniqueid)
-        Querys(uniqueid)
-        dispatcher.utter_message(f'El monto adeudado es de {monto} pesos. puede realizar el pago dentro de 5 días?')
-        return []
-
-
-class FechaVencimiento(Action):
-    def name(self):
-        return "action_fecha"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        today_date = date.today()
-        td = timedelta(5)
-        fechaPago=(today_date + td)
-        print("Fecha de Pago: ",fechaPago)
-        dia = (today_date + td).day
-        mes = (today_date + td).month
-        anio = (today_date + td).year
-        nombreMes=month_converter(mes)
-        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días.')
-        return []
-
-class FechaVencimiento2(Action):
-    def name(self):
-        return "action_fecha2"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        today_date = date.today()
-        td = timedelta(5)
-        fechaPago=(today_date + td)
-        print("Fecha de Pago: ",fechaPago)
-        dia = (today_date + td).day
-        mes = (today_date + td).month
-        anio = (today_date + td).year
-        nombreMes=month_converter(mes)
-        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, desea comunicarse con un ejecutivo para que le ayude?')
-        return []
-
-class FechaVencimiento3(Action):
-    def name(self):
-        return "action_fecha3"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        today_date = date.today()
-        td = timedelta(5)
-        fechaPago=(today_date + td)
-        print("Fecha de Pago: ",fechaPago)
-        dia = (today_date + td).day
-        mes = (today_date + td).month
-        anio = (today_date + td).year
-        nombreMes=month_converter(mes)
-        dispatcher.utter_message(f'La fecha sería el {dia} de {nombreMes} del {anio}, osea dentro de 5 días. {primernombre}, puede realizar el pago dentro de 5 días?')
-        return []
-
-
-######################################
-###### Action Guardar Slots ##########
-######################################
-
-global conoce_o_no
 class ActionGuardarConoce(Action):
 
     def name(self) -> Text:
@@ -469,8 +163,13 @@ class ActionGuardarConoce(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
+
         conoce_o_no = tracker.get_slot("conoce_o_no")
+
+        if isinstance(conoce_o_no, list):
+            conoce_o_no = conoce_o_no[0]
+
+
         if tracker.get_slot("conoce_o_no") is None:
             print("Es None ..")
         print("conoce_o_no: ", conoce_o_no)
@@ -478,7 +177,6 @@ class ActionGuardarConoce(Action):
         return []
 
 
-global es_o_no
 class ActionRecibirEsoNo(Action):
 
     def name(self) -> Text:
@@ -487,128 +185,217 @@ class ActionRecibirEsoNo(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-       
+
         es_o_no = tracker.get_slot("es_o_no")
+        if isinstance(es_o_no, list):
+            es_o_no = es_o_no[0]
+
         print("es_o_no: ", es_o_no)
             #dispatcher.utter_message(text=f"Razón: {Razón}")
         return []
 
-global pagará_o_no
-class ActionRecibirPagaoNo(Action):
 
-    def name(self) -> Text:
-        return "action_recibir_paga_o_no"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-       
-        pagará_o_no = tracker.get_slot("pagará_o_no")
-        print("pagará_o_no: ", pagará_o_no)
-            #dispatcher.utter_message(text=f"Razón: {Razón}")
-        return []
-
-class ActionRecibirAutorizaoNo(Action):
-
-    def name(self) -> Text:
-        return "action_guardar_razón"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        motivo = tracker.get_slot("razon")
-        print("motivo: ", motivo)
-            #dispatcher.utter_message(text=f"Razón: {Razón}")
-        return []
-
-
-####################
-##### Dar Hora #####
-####################
-class ActionDarHora(Action):
-    def name(self):   
-        return "action_dar_hora"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
-        t = datetime.datetime.now()
-        global uniqueid
-        uniqueid = tracker.sender_id
-        Querys(uniqueid)
-        dispatcher.utter_message(text=f"{primernombre}, son las {t.hour} {t.minute} Horas")
-
-        return []
-###########################
-#### Questions 2 y 3 ######
-###########################
-class ActionQuestion2(Action):
+conoce_intent=None
+class ActionConoceONo(Action):
     def name(self):
-        return "action_ask_question2"
+        return "action_save_conoce_o_no"
 
     def run(self, dispatcher, tracker, domain):
-     
-       dispatcher.utter_message(f'Disculpe le haré la pregunta nuevamente')
-       return []
+        global conoce_intent
+        # Obtener la intención actual
+        latest_message = tracker.latest_message
+        conoce_intent = latest_message['intent']['name']
+        if isinstance(conoce_intent, list):
+            conoce_intent = conoce_intent[0]
+        print(f'conoce o no: {conoce_intent}')
 
-class ActionQuestion3(Action):
+
+paga_intent=None
+class ActionPagaONo(Action):
     def name(self):
-        return "action_ask_question3"
+        return "action_save_intent_paga_o_no"
 
     def run(self, dispatcher, tracker, domain):
-       dispatcher.utter_message(f'Disculpe comencemos desde el principio')
-       return []
+        global paga_intent
+        # Obtener la intención actual
+        latest_message = tracker.latest_message
+        paga_intent = latest_message['intent']['name']
 
-###########################
-######## Sin uso ##########
-###########################
-class ActionReceivePersona(Action):
+        if isinstance(paga_intent, list):
+            paga_intent = paga_intent[0]
 
-    def name(self) -> Text:
-        return "action_unique_id"
+        print(f'paga_intent : {paga_intent}')
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+es_o_no_intent=None
+class ActionConoceONo(Action):
+    def name(self):
+        return "action_es_o_no"
 
-        text = tracker.latest_message['text']
-        print(f'uniqueid en action: {text}')
-        #dispatcher.utter_message(text=f"Es o no es {text}!")
+    def run(self, dispatcher, tracker, domain):
+        global es_o_no_intent
+        # Obtener la intención actual
+        latest_message = tracker.latest_message
+        es_o_no_intent = latest_message['intent']['name']
+    
+        if isinstance(es_o_no_intent, list):
+            es_o_no_intent = es_o_no_intent[0]
+        print(f'es_o_no_intent: {es_o_no_intent}')
+
+
+class ActionSiPaga(Action):
+    def name(self):
+        return "action_save_data"
+
+    def run(self, dispatcher, tracker, domain):
+        mydb = myclient["haddacloud-v2"]
+        mycol = mydb["voicebot-interactions"]
+
+
+        splits = tracker.sender_id
+        customer_id,campaign_group,caller_id,phone_number = splits.split('|')
+        print("-------------------------------------------------------------")
+        print(tracker.slots)
+
+        # Obtener la intención actual
+        latest_message = tracker.latest_message
+        current_intent = latest_message['intent']['name']
         
-        return []  #devolvemos a slot un string con valor
-
-
-
-
-class ResetSlotss(Action):
-
-    def name(self):
-        return "action_restart"
-
-    def run(self, dispatcher, tracker, domain):
-        global uniqueid
-        uniqueid = tracker.sender_id
-        print("uniqueid: ", tracker.sender_id)
-        llamarDB(uniqueid)
-        t = datetime.datetime.now()
-        print("hora :",t)
-        if 23 >= int(t.hour) >= 12:
-             dispatcher.utter_message(f'Buenas tardes, nos comunicamos por encargo de Cevsa, es usted {nombre}?')
+        # Imprimir el nombre de la intención
+        print(f'current_intent: {current_intent}')
+        if(current_intent=="sin_dinero_intent"):
+            current_intent="Sin dinero"
+        elif(current_intent=="estoy_cesante_intent"):
+            current_intent="Cesante"
+        elif(current_intent=="ya_pagué_intent"):
+            current_intent="Ya cancelo"
+        elif(current_intent=="estoy_enfermo_intent"):
+            current_intent="Enfermo"
+        elif(current_intent=="desconoce_seguro_intent"):
+            current_intent="Desconoce seguro"
+        elif(current_intent=="no_contrate_seguro_intent"):
+            current_intent="No contrato seguro"
+        elif(current_intent=="no_puedo_intent"):
+            current_intent="No puede cancelar"
+        elif(current_intent=="no_quiero_intent"):
+            current_intent="No quiere cancelar"
+        elif(current_intent=="negación"):
+            current_intent="Sin razón"
         else:
-             dispatcher.utter_message(f'Buenos días, nos comunicamos por encargo de Cevsa, es usted {nombre}?')
-        progreso(7,razon,compromiso_p,derivacion,fecha_com,"No",uniqueid)
-        print("es_o_no: ", None)
-        print("conoce_o_no: ", None)
-        print("pagará_o_no: ", None)
-        print("Razón: ", None)
-        return [SlotSet("es_o_no", None),SlotSet("conoce_o_no", None),SlotSet("pagará_o_no", None),SlotSet("Razón", None)]
+           current_intent = None
+        
+        slots_to_update = [
+            "name",
+            "es_persona_correcta",
+            "conoce_o_no",
+            "fecha_vcto",
+            "fecha_pago",
+            "monto",
+            "paga_o_no",
+            "opcion_pago",
+            "phone_number"
+        ]
+        updated_slots = {slot: tracker.slots.get(slot) or None for slot in slots_to_update}
+        
+        print(f'current_intent: {current_intent}')
+        print(f'name: {updated_slots["name"]}')
+        print(f'es_persona_correcta: {updated_slots["es_persona_correcta"]}')
+        print(f'conoce_o_no: {updated_slots["conoce_o_no"]}')
+        print(f'fecha_vcto: {updated_slots["fecha_vcto"]}')
+        print(f'monto: {updated_slots["monto"]}')
+        print(f'paga_o_no: {updated_slots["paga_o_no"]}')
+        print(f'opcion_pago: {current_intent}')
+        print(f'phone_number: {updated_slots["phone_number"]}')
+        print(f'fecha_pago: {updated_slots["fecha_pago"]}')
+        
+
+
+        print("-------------------------------------------------------------")
+
+        result = mycol.update_one(
+        {
+            "customer_id": str(customer_id),
+            "organization_id": int(organization_id),
+            "group_campaign_id": int(campaign_group),
+            "caller_id": str(caller_id)
+        },
+        {
+            "$set": {
+                "contesta":"si",
+                "corta": "no",
+                "es_persona_correcta": updated_slots["es_persona_correcta"],
+                "conoce_o_no": updated_slots["conoce_o_no"],
+                "opcion_pago": current_intent,
+                "paga_o_no": updated_slots["paga_o_no"],
+                "name": updated_slots["name"],
+                "monto": updated_slots["monto"],
+                "fecha_vcto": updated_slots["fecha_vcto"],
+                "fecha_pago": updated_slots["fecha_pago"],
+                "phone_number": updated_slots["phone_number"],
+                "created_at": datetime.datetime.now(),
+                "updated_at": datetime.datetime.now()
+            }
+        },
+        upsert=True
+        )
+       
+        print(f'result: {result}')
+        # print(f'{result.modified_count} Updateds')
+        name=None
+        es_persona_correcta=None
+        conoce_o_no=None
+        fecha_vcto=None
+        fecha_pago=None
+        monto=None
+        paga_o_no=None
+        fecha_vcto=None
+        opcion_pago=None
+        phone_number=None
+
+        return []
+    
+
+class ActionSlotReset(Action):  
+    def name(self):         
+        return 'action_slot_reset'  
+    def run(self, dispatcher, tracker, domain):
+        return[AllSlotsReset()]
 
 
 
+class ActionRepeatLastQuestion(Action):
 
+    def name(self) -> Text:
+        return "action_repeat_last_question"
 
- 
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        last_bot_utterance = None
 
+        for event in reversed(tracker.events):
+            if event.get("event") == "bot":
+                last_bot_utterance = event.get("text")
+                break
 
+        if last_bot_utterance:
+            dispatcher.utter_message(text=last_bot_utterance)
+        else:
+            dispatcher.utter_message(text="Lo siento, no tengo información sobre la última pregunta.")
 
+        return []
+
+class ActionFallback(Action):
+
+    def name(self) -> Text:
+        return "action_default_fallback"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        # Obtener la intención predicha
+        predicted_intent = tracker.latest_message['intent']['name']
+
+        # Establecer la ranura 'predicted_intent' con la intención predicha
+        return [SlotSet("predicted_intent", predicted_intent)]

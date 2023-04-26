@@ -3,130 +3,158 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
-- de_donde
+- ANY
 - negación
+- saludos
+- nlu_fallback
+- eres_humano
+- afirmación
+- preguntar_monto_deuda
+- de_donde
+- out_of_scope
 - que_fecha
 - preguntar_nombre
-- afirmación
-- no_tengo_plata_intent
-- saludos
-- porque_no_puedo_intent
-- estoy_cesante_intent
-- ya_pagué_intent
-- out_of_scope
-- eres_humano
-- no_tengo_auto_intent
-- estoy_enfermo_intent
 - despedida
-- no_use_autopista_intent
-- vendí_el_auto_intent
 - no_quiero_pagar_intent
 - preguntar_monto
-- soy_yo
 - me_repite
 - space
 - start
 - inicio
 - que_hora_es
+- cuando
+- sin_dinero_intent
+- estoy_cesante_intent
+- ya_pagué_intent
+- estoy_enfermo_intent
+- desconoce_seguro_intent
+- no_contrate_seguro_intent
+- no_puedo_intent
+- no_quiero_intent
 entities:
-- cesante
-- enfermo
-- no_ah_usado_autopista
-- no_puede
-- no_quiere_pagar
-- no_tengo_auto
-- no_tengo_plata
-- porque_no_puedo
+- nombre_persona
+- razon
+- motivo
 - respuesta
-- vendí_el_auto
-- ya_pago
 slots:
   derivado_o_no:
-    type: text
-    influence_conversation: true
-  es_o_no:
-    type: text
-    influence_conversation: true
-  conoce_o_no:
-    type: text
-    influence_conversation: true
-  autoriza_o_no:
-    type: text
-    influence_conversation: true
-  pagará_o_no:
     type: text
     influence_conversation: true
   razon:
     type: text
     influence_conversation: true
-
+  phone_number:
+    type: text
+    influence_conversation: true
+  name:
+    type: text
+    influence_conversation: true
+  es_persona_correcta:
+    type: text
+    influence_conversation: true
+  conoce_o_no:
+    type: text
+    influence_conversation: true
+  fecha_vcto:
+    type: text
+    influence_conversation: true
+  fecha_pago:
+    type: text
+    influence_conversation: true
+  monto:
+    type: text
+    influence_conversation: true
+  paga_o_no:
+    type: text
+    influence_conversation: true
+  opcion_pago:
+    type: text
+    influence_conversation: false
+  predicted_intent:
+    type: text
+    influence_conversation: false
 responses:
+  utter_out_of_scope:
+  - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
+  utter_greet:
+  - text: Hola!, Mi nombre es lia, me comunico con {name}?.
+  utter_greet_apolo:
+  - text: Disculpe, me comunico con {name}?.
+  utter_preguntar_conoce:
+  - text: ¿Usted conoce a {name}?
+  utter_no_conoce:
+  - text: Disculpe la molestia, que tenga buen día. | EXIT
+  utter_ask_question:
+  - text: '{name}, estamos llamando de S b Pey por su Tarjeta Salco-Preunic, Visa SbPay pendiente de pago desde el {fecha_vcto}.​ ¿Puede realizar el pago dentro de los 3 próximos días?​'
+  utter_ask_question_2:
+  - text: '{name}, ¿Puede realizar el pago dentro de los 3 próximos días?​'
+  utter_si_paga:
+  - text: Muchas gracias por su tiempo {name}. Su pago ha quedado agendado para el {fecha_pago}, le recordamos que puede pagar en www.s b pey.cl , La AP Salcobrand y en cualquier Salcobrand o Preunic.​ que tenga un buen dia. | EXIT
   utter_default:
-  - text: Disculpe ¿Sería tan amable de responder con un si o un no?
+  - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
   utter_default_repetir:
-  - text: Disculpe, no le entendí ¿Sería tan amable de responder con un si o un no?
+  - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
   utter_disculpe_molestia:
-  - text: Disculpe la molestia, que tenga un buen día, Adiós.
-  utter_si_conoce:
-  - text: Podría comentarle que tenemos información importante y que nos puede encontrar en triple w .sicc.cl o llamando al 223658000 porfavor. Muchas gracias por su tiempo, adiós.
-  utter_negación_pago:
-  - text: ¿Podría indicarnos el motivo?
+  - text: Disculpe la molestia, que tenga un buen día, Adiós.| EXIT
   utter_despedida:
   - text: Muchas gracias por su tiempo, adiós | EXIT
   utter_bot:
-  - text: Soy un asistente virtual.
+  - text: Estamos llamando desde Autopista Central y Soy un asistente virtual.
+  utter_monto:
+  - text: El monto es de {monto} pesos vencida el {fecha_vcto}
+  utter_donde:
+  - text: Estamos llamando desde Autopista Central.
+  utter_donde2:
+  - text: Estamos llamando desde Autopista Central ¿Puede realizar el pago dentro de los 3 próximos días?.
+  utter_no_paga:
+  - text: ¿Podría indicarnos el motivo?
+  utter_no_tranfiere:
+  - text: Muchas gracias por su tiempo {name}. Para más información recuerde que puede ingresar a revisar su estado de cuenta en  www.s b pey.cl ¡Que tenga un lindo día!​ | EXIT
+  utter_ser_transferido:
+  - text: Entiendo, Muchas gracias. ¿necesita que lo transfiera a un ejecutivo para ayudarle a solucionar su situación o aclarar cualquier duda?.​
+  utter_derivado:
+  - text: Ok, será deerivado con uno de nuestros ejecutivos. Adios | DER
+  utter_cuando:
+  - text: la fecha es el {fecha_vcto}
 actions:
-- action_ask_question
-- action_ask_question2
-- action_ask_question3
-- action_autoriza_o_no
-- action_conoce
-- action_contactar
-- action_despedida
+- action_default_fallback
+- action_es_o_no
 - action_no_paga
-- action_dar_hora
-- action_donde
-- action_donde2
-- action_donde3
-- action_enviar_slots
-- action_fecha
-- action_fecha2
-- action_fecha3
-- action_final
-- action_guardar_conoce_o_no
-- action_hello
-- action_hello2
-- action_monto
-- action_monto2
-- action_monto3
-- action_quien
-- action_recibir_es_o_no
-- action_recibir_paga_o_no
-- action_request
+- action_preguntar_persona
+- action_repeat_last_question
 - action_restart2
-- action_say_reason
-- action_si_conoce
+- action_save_conoce_o_no
+- action_save_data
+- action_save_intent_paga_o_no
 - action_si_paga
-- action_tracker_id
+- action_slot_reset
+- opciones_pago_form
+- set_debts_action
+- set_name_action
+- utter_ask_question
+- utter_ask_question_2
 - utter_bot
 - utter_default
 - utter_default_repetir
 - utter_despedida
-- action_is_logged_in
-- action_slot_reset
-- action_guardar_razón
-- action_no_derivado
-- action_si_derivado
+- utter_disculpe_molestia
+- utter_donde
+- utter_donde2
+- utter_greet
+- utter_greet_apolo
+- utter_monto
+- utter_no_conoce
+- utter_no_paga
+- utter_out_of_scope
+- utter_preguntar_conoce
+- utter_si_paga
+- utter_no_tranfiere
+- utter_ser_transferido
 
 forms:
-  derivado_form:
-    required_slots:
-      derivado_o_no:
-      - entity: respuesta
-        type: from_entity
   persona_form:
     required_slots:
-      es_o_no:
+      es_persona_correcta:
       - entity: respuesta
         type: from_entity
   lo_conoce_form:
@@ -136,32 +164,15 @@ forms:
         type: from_entity
   paga_form:
     required_slots:
-      pagará_o_no:
+      paga_o_no:
       - entity: respuesta
         type: from_entity
-  razon_de_no_pago_form:
+  no_paga_form:
     required_slots:
-      razon:
-      - entity: respuesta
+      opcion_pago:
+      - entity: motivo
         type: from_entity
-      - entity: cesante
-        type: from_entity
-      - entity: no_tengo_plata
-        type: from_entity
-      - entity: enfermo
-        type: from_entity
-      - entity: no_ah_usado_autopista
-        type: from_entity
-      - entity: no_puede
-        type: from_entity
-      - entity: no_quiere_pagar
-        type: from_entity
-      - entity: no_tengo_auto
-        type: from_entity
-      - entity: vendí_el_auto
-        type: from_entity
-      - entity: ya_pago
-        type: from_entity
+
 
 
 
