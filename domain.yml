@@ -112,7 +112,7 @@ responses:
   - text: Muchas gracias por su tiempo {name}. Para más información recuerde que puede ingresar a revisar su estado de cuenta en  www.s b pey.cl ¡Que tenga un lindo día!​ | EXIT
   utter_ser_transferido:
   - text: Entiendo, Muchas gracias. ¿necesita que lo transfiera a un ejecutivo para ayudarle a solucionar su situación o aclarar cualquier duda?.​
-  utter_derivado:
+  utter_tranfiere:
   - text: Ok, será deerivado con uno de nuestros ejecutivos. Adios | DER
   utter_cuando:
   - text: la fecha es el {fecha_vcto}
@@ -150,6 +150,7 @@ actions:
 - utter_si_paga
 - utter_no_tranfiere
 - utter_ser_transferido
+- utter_tranfiere
 
 forms:
   persona_form:
