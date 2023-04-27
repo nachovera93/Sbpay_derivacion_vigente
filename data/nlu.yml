@@ -69,6 +69,7 @@ nlu:
     - si [soy yo](respuesta)
     - [te](respuesta)
     - [t](respuesta)
+    - [si](respuesta)
 - intent: negación
   examples: |
     - [no](respuesta)
@@ -108,7 +109,6 @@ nlu:
     - [no](respuesta) tengo dinero en estos momentos
     - [no](respuesta) puedo pagar ahora
     - estoy corto de dinero [no](respuesta) puedo pagar
-    - [no](respuesta)
 - intent: saludos
   examples: |
     - hola
@@ -268,8 +268,6 @@ nlu:
     - ¿Podría indicarme el lugar de donde me llama?
     - ¿De qué lugar específico me habla?
     - de donde llama
-
-
 - intent: cuando
   examples: |
     - cuando?
@@ -320,14 +318,11 @@ nlu:
     - ¿Podrías decirme cuál es el monto que tengo que pagar para liquidar mi deuda?
     - ¿Cuánto tengo que pagar en total por mi deuda?
     - cuanto
-
 - intent: nlu_fallback
   examples: |
     - de que habla
     - no se que esta hablando
-
-
-- intent: estoy_cesante_intent 
+- intent: estoy_cesante_intent
   examples: |
     - no tengo [trabajo](motivo)
     - estoy [sin pega](motivo)
@@ -341,8 +336,6 @@ nlu:
     - estoy [sin empleo](motivo)
     - actualmente [no cuento con un trabajo](motivo)
     - me quedé [sin trabajo](motivo)
-
-
 - intent: estoy_enfermo_intent
   examples: |
     - estoy [enfermo](motivo)
@@ -357,8 +350,6 @@ nlu:
     - estoy [decaído](motivo)
     - tengo [fiebre](motivo)
     - estoy [mal de salud](motivo)
-
-
 - intent: no_puedo_intent
   examples: |
     - [no puedo](motivo)
@@ -374,7 +365,6 @@ nlu:
     - [no me es posible](motivo)
     - [no puedo realizarlo](motivo)
     - no_quiero_intent:
-
 - intent: no_quiero_intent
   examples: |
     - [no quiero](motivo)
@@ -389,9 +379,6 @@ nlu:
     - [no quiero participar](motivo)
     - [no quiero involucrarme](motivo)
     - [rechazo hacerlo](motivo)
-
-
-
 - intent: ya_pagué_intent
   examples: |
     - [Ya pague](motivo)
@@ -404,8 +391,6 @@ nlu:
     - [ya aboné](motivo)
     - [pagué hace tiempo](motivo)
     - [ya cubrí el pago](motivo)
-
-
 - intent: desconoce_seguro_intent
   examples: |
     - [No sé nada sobre el seguro](motivo)
@@ -432,8 +417,6 @@ nlu:
     - [No tengo póliza de seguro](motivo)
     - [No tengo cobertura de seguro](motivo)
     - [No poseo una póliza de seguro](motivo)
-
-
 - intent: no_contrate_seguro_intent
   examples: |
     - [No contraté seguro](motivo)
@@ -445,10 +428,8 @@ nlu:
     - [No he suscrito un seguro](motivo)
     - [No tomé un seguro](motivo)
     - [No me he asegurado](motivo)
-    - [No tengo seguro contratado](motivo)
     - [No he firmado ninguna póliza de seguro](motivo)
     - [No he obtenido un seguro](motivo)
-
 - intent: sin_dinero_intent
   examples: |
     - [No tengo dinero](motivo)
@@ -465,6 +446,3 @@ nlu:
     - [Estoy corto de dinero](motivo)
     - [no tengo plata](motivo)
     - [sin plata](motivo)
-
-
-    

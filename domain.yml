@@ -3,12 +3,12 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
+- saludos
+- afirmación
 - ANY
 - negación
-- saludos
 - nlu_fallback
 - eres_humano
-- afirmación
 - preguntar_monto_deuda
 - de_donde
 - out_of_scope
@@ -32,9 +32,9 @@ intents:
 - no_puedo_intent
 - no_quiero_intent
 entities:
+- motivo
 - nombre_persona
 - razon
-- motivo
 - respuesta
 slots:
   derivado_o_no:
@@ -117,11 +117,11 @@ responses:
   utter_cuando:
   - text: la fecha es el {fecha_vcto}
 actions:
-- action_razon_no_pago
 - action_default_fallback
 - action_es_o_no
 - action_no_paga
 - action_preguntar_persona
+- action_razon_no_pago
 - action_repeat_last_question
 - action_restart2
 - action_save_conoce_o_no
@@ -146,13 +146,12 @@ actions:
 - utter_monto
 - utter_no_conoce
 - utter_no_paga
+- utter_no_tranfiere
 - utter_out_of_scope
 - utter_preguntar_conoce
-- utter_si_paga
-- utter_no_tranfiere
 - utter_ser_transferido
+- utter_si_paga
 - utter_tranfiere
-
 forms:
   persona_form:
     required_slots:
@@ -174,7 +173,3 @@ forms:
       opcion_pago:
       - entity: motivo
         type: from_entity
-
-
-
-

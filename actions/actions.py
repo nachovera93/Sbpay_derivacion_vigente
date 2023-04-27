@@ -36,9 +36,12 @@ class SetNameAction(Action):
 
     def run(self, dispatcher, tracker, domain):
         #tracker.update(Restarted())
+        print("set_name_action")
         try:
             splits = tracker.sender_id
+            print("1")
             customer_id,campaign_group,caller_id,phone_number = splits.split('|')
+            print("2")
             names = getNameByCustomerID(customer_id)
             print(names)
         except:
@@ -128,7 +131,7 @@ class ActionSiPaga(Action):
         return "action_si_paga"
 
     def run(self, dispatcher, tracker, domain):
-        
+        print("action si paga")
         today_date = date.today()
         td = timedelta(3)
         fechaPago=str(today_date + td)
@@ -217,6 +220,11 @@ class ActionPagaONo(Action):
 
     def run(self, dispatcher, tracker, domain):
         global paga_intent
+        today_date = date.today()
+        td = timedelta(3)
+        fechaPago=str(today_date + td)
+        print("Fecha de Pago: ",fechaPago)
+        
         # Obtener la intención actual
         latest_message = tracker.latest_message
         paga_intent = latest_message['intent']['name']
@@ -225,6 +233,8 @@ class ActionPagaONo(Action):
             paga_intent = paga_intent[0]
 
         print(f'paga_intent : {paga_intent}')
+        if paga_intent == "afirmación":
+            return [SlotSet("fecha_pago", fechaPago)]
 
 es_o_no_intent=None
 class ActionConoceONo(Action):
@@ -345,6 +355,7 @@ class ActionSiPaga(Action):
                 "es_persona_correcta": updated_slots["es_persona_correcta"],
                 "conoce_o_no": updated_slots["conoce_o_no"],
                 "razon_no_pago": updated_slots["razon_no_pago"],
+                "derivado_o_no": current_intent,
                 "paga_o_no": updated_slots["paga_o_no"],
                 "name": updated_slots["name"],
                 "monto": updated_slots["monto"],
