@@ -265,7 +265,7 @@ stories:
       - requested_slot: null
     - active_loop: null
     - action: action_save_intent_paga_o_no
-    - action: utter_no_pagas
+    - action: utter_no_paga
     - intent: negación
       entities:
       - respuesta: no
