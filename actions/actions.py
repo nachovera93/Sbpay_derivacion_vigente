@@ -28,7 +28,7 @@ CONNECTION_STRING = "mongodb://172.16.1.41:27017,172.16.1.42:27017,172.16.1.43:2
 # CONNECTION_STRING = "mongodb://Admin:T3c4dmin1.@172.16.1.228:27017/data_warehouse?authSource=admin&readPreference=secondaryPreferred"
 myclient = pymongo.MongoClient(CONNECTION_STRING)
 
-organization_id=11
+organization_id=14
 
 class SetNameAction(Action):
     def name(self):
