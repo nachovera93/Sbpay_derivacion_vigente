@@ -99,13 +99,13 @@ responses:
   utter_despedida:
   - text: Muchas gracias por su tiempo, adiós | EXIT
   utter_bot:
-  - text: Estamos llamando desde Autopista Central y Soy un asistente virtual.
+  - text: Estamos llamando desde S b Pey por su Tarjeta Salco-Preunic y Soy un asistente virtual.
   utter_monto:
   - text: El monto es de {monto} pesos vencida el {fecha_vcto}
   utter_donde:
-  - text: Estamos llamando desde Autopista Central.
+  - text: Estamos llamando desde S b Pey por su Tarjeta Salco-Preunic.
   utter_donde2:
-  - text: Estamos llamando desde Autopista Central ¿Puede realizar el pago dentro de los 3 próximos días?.
+  - text: Estamos llamando desde S b Pey por su Tarjeta Salco-Preunic ¿Puede realizar el pago dentro de los 3 próximos días?.
   utter_no_paga:
   - text: ¿Podría indicarnos el motivo?
   utter_no_tranfiere:
