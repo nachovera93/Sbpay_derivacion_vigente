@@ -1,3 +1,5 @@
+# Configuration for Rasa NLU.
+# https://rasa.com/docs/rasa/nlu/components/
 language: es
 
 pipeline:
@@ -11,9 +13,6 @@ pipeline:
     max_ngram: 4
   - name: DIETClassifier
     epochs: 100
-  - name: ResponseSelector
-    epochs: 100
-    constrain_similarities: true
   - name: FallbackClassifier # Asegúrate de que esté presente en tu pipeline
     threshold: 0.7
     ambiguity_threshold: 0.1
@@ -27,4 +26,3 @@ policies:
   - name: TEDPolicy
     epochs: 100
     max_history: 10
-
