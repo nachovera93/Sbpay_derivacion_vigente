@@ -35,14 +35,14 @@ class SetNameAction(Action):
         return "set_name_action"
 
     def run(self, dispatcher, tracker, domain):
+        global organization_id
         #tracker.update(Restarted())
         print("set_name_action")
         try:
             splits = tracker.sender_id
-            print("1")
             customer_id,campaign_group,caller_id,phone_number = splits.split('|')
-            print("2")
-            names = getNameByCustomerID(customer_id)
+            print(f'organization_id: {organization_id}')
+            names = getNameByCustomerID(customer_id,organization_id)
             print(names)
         except:
             names = "Jose Miguel"

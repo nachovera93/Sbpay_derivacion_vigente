@@ -45,31 +45,25 @@ slots:
     influence_conversation: true
   phone_number:
     type: text
-    influence_conversation: true
+    influence_conversation: false
   name:
     type: text
-    influence_conversation: true
+    influence_conversation: false
   es_persona_correcta:
-    type: text
-    influence_conversation: true
-  conoce_o_no:
     type: text
     influence_conversation: true
   fecha_vcto:
     type: text
-    influence_conversation: true
+    influence_conversation: false
   fecha_pago:
     type: text
-    influence_conversation: true
+    influence_conversation: false
   monto:
     type: text
-    influence_conversation: true
+    influence_conversation: false
   paga_o_no:
     type: text
     influence_conversation: true
-  opcion_pago:
-    type: text
-    influence_conversation: false
   predicted_intent:
     type: text
     influence_conversation: false
@@ -89,7 +83,7 @@ responses:
   utter_ask_question_2:
   - text: '{name}, ¿Puede realizar el pago dentro de los 3 próximos días?​'
   utter_si_paga:
-  - text: Muchas gracias por su tiempo {name}. Su pago ha quedado agendado para el {fecha_pago}, le recordamos que puede pagar en www.s b pey.cl , La AP Salcobrand y en cualquier Salcobrand o Preunic.​ que tenga un buen dia. | EXIT
+  - text: Muchas gracias por su tiempo {name}. Su pago ha quedado agendado para el {fecha_pago}, le recordamos que puede pagar en triple doble b punto s b pey.cl , La AP Salcobrand y en cualquier Salcobrand o Preunic.​ que tenga un buen dia. | EXIT
   utter_default:
   - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
   utter_default_repetir:
@@ -113,7 +107,7 @@ responses:
   utter_ser_transferido:
   - text: Entiendo, Muchas gracias. ¿necesita que lo transfiera a un ejecutivo para ayudarle a solucionar su situación o aclarar cualquier duda?.​
   utter_tranfiere:
-  - text: Ok, será deerivado con uno de nuestros ejecutivos. Adios | DER
+  - text: Ok, será deerivado con uno de nuestros ejecutivos. Espere en linea por favor | DER
   utter_cuando:
   - text: la fecha es el {fecha_vcto}
 actions:
@@ -158,18 +152,8 @@ forms:
       es_persona_correcta:
       - entity: respuesta
         type: from_entity
-  lo_conoce_form:
-    required_slots:
-      conoce_o_no:
-      - entity: respuesta
-        type: from_entity
   paga_form:
     required_slots:
       paga_o_no:
       - entity: respuesta
-        type: from_entity
-  no_paga_form:
-    required_slots:
-      opcion_pago:
-      - entity: motivo
         type: from_entity

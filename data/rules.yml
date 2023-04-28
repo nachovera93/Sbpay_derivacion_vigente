@@ -7,6 +7,28 @@ rules:
       - action: utter_despedida
       - action: action_restart2
   
+  
+  - rule: interactive_story_1
+    steps:
+    #- intent: saludos
+    #- action: action_slot_reset
+    #- action: set_name_action
+    - action: utter_greet
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_no_conoce
+    - action: action_save_data
+    - action: action_restart2
+
   - rule: ser transferido o no
     steps:
     - action: utter_ser_transferido
@@ -174,6 +196,13 @@ rules:
       - action: utter_cuando
       - intent: me_repite
       - action: utter_cuando
+  
+  - rule: me repite 16
+    steps:
+      - action: utter_ser_transferido
+      - intent: me_repite
+      - action: utter_ser_transferido
+
 
   - rule: donde 1
     steps:
