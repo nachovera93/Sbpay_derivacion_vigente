@@ -42,10 +42,12 @@ class SetNameAction(Action):
             splits = tracker.sender_id
             customer_id,campaign_group,caller_id,phone_number = splits.split('|')
             print(f'organization_id: {organization_id}')
+            print(f'customer_id: {customer_id}')
             names = getNameByCustomerID(customer_id,organization_id)
             print(names)
-        except:
-            names = "Jose Miguel"
+        except Exception as e:
+               print(f'Error al obtener los nombres: {e}')
+               names = "Jose Miguel"
         try: 
             deuda_mora, fecha_vcto = getDebtsByCustomerID(customer_id, campaign_group)
         except:
@@ -65,7 +67,7 @@ class SetNameAction(Action):
 
 
 
-def getNameByCustomerID(customer_id):
+def getNameByCustomerID(customer_id,organization_id):
 
     mydb = myclient["haddacloud-v2"]
     mycol = mydb["deudors"]
