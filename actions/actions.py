@@ -235,8 +235,11 @@ class ActionPagaONo(Action):
             paga_intent = paga_intent[0]
 
         print(f'paga_intent : {paga_intent}')
+
         if paga_intent == "afirmación":
             return [SlotSet("fecha_pago", fechaPago)]
+        elif  paga_intent == "negación":
+            return [SlotSet("razon_no_pago_fase", True)]
 
 es_o_no_intent=None
 class ActionConoceONo(Action):
@@ -262,6 +265,7 @@ class ActionConoceONo(Action):
 
     def run(self, dispatcher, tracker, domain):
         # Obtener la intención actual
+        print(f'action_razon_no_pago')
         latest_message = tracker.latest_message
         current_intent_razon = latest_message['intent']['name']
     
@@ -269,6 +273,9 @@ class ActionConoceONo(Action):
             current_intent_razon = current_intent_razon[0]
         
         print(f'current_intent_razon: {current_intent_razon}')
+        if current_intent_razon == "nlu_fallback":
+              dispatcher.utter_message(template="utter_ser_transferido")
+              return [SlotSet("razon_no_pago", "Sin razón")]
         if(current_intent_razon=="sin_dinero_intent"):
             current_intent_razon="Sin dinero"
         elif(current_intent_razon=="estoy_cesante_intent"):
@@ -402,7 +409,7 @@ class ActionRepeatLastQuestion(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         last_bot_utterance = None
-
+        print("Repetir accion anterior")
         for event in reversed(tracker.events):
             if event.get("event") == "bot":
                 last_bot_utterance = event.get("text")
@@ -414,6 +421,7 @@ class ActionRepeatLastQuestion(Action):
             dispatcher.utter_message(text="Lo siento, no tengo información sobre la última pregunta.")
 
         return []
+
 
 class ActionFallback(Action):
 

@@ -67,6 +67,10 @@ slots:
   predicted_intent:
     type: text
     influence_conversation: false
+  razon_no_pago_fase:
+    type: bool
+    initial_value: False
+    influence_conversation: False
 responses:
   utter_out_of_scope:
   - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
@@ -146,6 +150,7 @@ actions:
 - utter_ser_transferido
 - utter_si_paga
 - utter_tranfiere
+
 forms:
   persona_form:
     required_slots:

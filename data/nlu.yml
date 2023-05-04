@@ -347,6 +347,7 @@ nlu:
     - estoy [mal de salud](motivo)
 - intent: no_puedo_intent
   examples: |
+    - [no me han pagado](motivo)
     - [no puedo](motivo)
     - lo siento, [no podré](motivo)
     - [incapaz de hacerlo](motivo)
