@@ -24,6 +24,27 @@ fecha_com=None
 entrega_info=None
 
 
+from rasa.core.actions.action import Action
+from rasa.core.events import RestartConversation
+
+class ActionRestartConversation(Action):
+    def name(self) -> Text:
+        return "action_restart_conversation"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # Puedes enviar un mensaje antes de reiniciar la conversación, si lo deseas
+        dispatcher.utter_message(text="Lo siento, parece que me he confundido. Vamos a empezar de nuevo.")
+
+        # Reinicia la conversación
+        return [RestartConversation()]
+
+        
+
 CONNECTION_STRING = "mongodb://172.16.1.41:27017,172.16.1.42:27017,172.16.1.43:27017/?replicaSet=haddacloud-rs&readPreference=secondaryPreferred"
 # CONNECTION_STRING = "mongodb://Admin:T3c4dmin1.@172.16.1.228:27017/data_warehouse?authSource=admin&readPreference=secondaryPreferred"
 myclient = pymongo.MongoClient(CONNECTION_STRING)

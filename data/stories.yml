@@ -4,6 +4,32 @@ stories:
 
   
   
+  - story: interactive_story_1
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_no_conoce
+    - action: action_save_data
+    - action: action_restart2
 
   
   #- story: interactive_story_1_unlike_2
