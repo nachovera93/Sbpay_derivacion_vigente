@@ -270,6 +270,26 @@ stories:
     - action: action_razon_no_pago
     - action: utter_ser_transferido
 
+
+  - story: fallback
+    steps:
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: nlu_fallback
+    - action: action_razon_no_pago
+   
+
   - story: sin dinero
     steps:
     - intent: saludos

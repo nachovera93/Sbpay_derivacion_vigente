@@ -292,7 +292,7 @@ class ActionConoceONo(Action):
         
         print(f'current_intent_razon: {current_intent_razon}')
         if current_intent_razon == "nlu_fallback":
-              dispatcher.utter_message(template="utter_ser_transferido")
+              #dispatcher.utter_message(template="utter_ser_transferido")
               return [SlotSet("razon_no_pago", "Sin razón")]
         if(current_intent_razon=="sin_dinero_intent"):
             current_intent_razon="Sin dinero"
