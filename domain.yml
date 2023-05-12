@@ -83,7 +83,7 @@ responses:
   utter_no_conoce:
   - text: Disculpe la molestia, que tenga buen día. | EXIT
   utter_ask_question:
-  - text: '{name}, estamos llamando de S b Pey por su Tarjeta Salco Preunic, Visa S B Pey pendiente de pago desde el {fecha_vcto}.​ ¿Puede realizar el pago dentro de los 3 próximos días?​'
+  - text: '{name}, estamos llamando de S b Pey por su Tarjeta Salco Preunic pendiente de pago desde el {fecha_vcto}.​ ¿Puede realizar el pago dentro de los 3 próximos días?​'
   utter_ask_question_2:
   - text: '{name}, ¿Puede realizar el pago dentro de los 3 próximos días?​'
   utter_si_paga:

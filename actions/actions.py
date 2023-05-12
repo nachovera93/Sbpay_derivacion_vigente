@@ -139,13 +139,7 @@ def update_key_for_customer(customer_id, campaign_group, caller_id, valueContest
 
 # Luego puedes llamar a la función de esta manera
 
-
-def month_converter(i):
-       month = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-       return month[i-1]
-
-
-        
+     
     
 class ActionSiPaga(Action):
     def name(self):
