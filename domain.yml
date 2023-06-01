@@ -73,7 +73,7 @@ slots:
     influence_conversation: False
 responses:
   utter_out_of_scope:
-  - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
+  - text: Lo siento, no entendí lo que dijiste. repite porfavor
   utter_greet:
   - text: Hola!, Mi nombre es lia, me comunico con {name}?.
   utter_greet_apolo:
@@ -83,9 +83,9 @@ responses:
   utter_no_conoce:
   - text: Disculpe la molestia, que tenga buen día. | EXIT
   utter_ask_question:
-  - text: '{name}, estamos llamando de S b Pey por su Tarjeta Salco Preunic visa S b Pey pendiente de pago desde el {fecha_vcto}.​ ¿Puede realizar el pago dentro de los 3 próximos días?​'
+  - text: '{name}, estamos llamando de S b Pey por su Tarjeta Salco Preunic visa S b Pey pendiente de pago desde el {fecha_vcto}.​ ¿Puede realizar el pago dentro de los 3 próximos días? responda con un si o un no​'
   utter_ask_question_2:
-  - text: '{name}, ¿Puede realizar el pago dentro de los 3 próximos días?​'
+  - text: '{name}, ¿Puede realizar el pago dentro de los 3 próximos días?​ responda con un si o un no'
   utter_si_paga:
   - text: Muchas gracias por su tiempo {name}. Su pago ha quedado agendado para el {fecha_pago}, le recordamos que puede pagar en triple doble b punto s b pey punto ce ele , La AP Salcobrand y en cualquier Salcobrand o Preunic.​ que tenga un buen dia. | EXIT
   utter_default:
@@ -103,13 +103,13 @@ responses:
   utter_donde:
   - text: Estamos llamando desde S b Pey por su Tarjeta Salco-Preunic visa S b Pey .
   utter_donde2:
-  - text: Estamos llamando desde S b Pey por su Tarjeta Salco-Preunic visa S b Pey  ¿Puede realizar el pago dentro de los 3 próximos días?.
+  - text: Estamos llamando desde S b Pey por su Tarjeta Salco-Preunic visa S b Pey  ¿Puede realizar el pago dentro de los 3 próximos días? responda con un si o un no.
   utter_no_paga:
   - text: ¿Podría indicarnos el motivo?
   utter_no_tranfiere:
   - text: Muchas gracias por su tiempo {name}. Para más información recuerde que puede ingresar a revisar su estado de cuenta en triple doble b  punto s b pey punto cl ¡Que tenga un lindo día!​ | EXIT
   utter_ser_transferido:
-  - text: Entiendo, Muchas gracias. ¿necesita que lo transfiera a un ejecutivo para ayudarle a solucionar su situación o aclarar cualquier duda?.​
+  - text: Entiendo, Muchas gracias. ¿necesita que lo transfiera a un ejecutivo para ayudarle a solucionar su situación o aclarar cualquier duda? responda con un si o un no.​
   utter_tranfiere:
   - text: Ok, será deerivado con uno de nuestros ejecutivos. Espere en linea por favor | DER
   utter_cuando:
