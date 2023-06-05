@@ -73,7 +73,7 @@ slots:
     influence_conversation: False
 responses:
   utter_out_of_scope:
-  - text: Lo siento, no entendí lo que dijiste. repite porfavor
+  - text: Lo siento, puede responder con un si o un no?
   utter_greet:
   - text: Hola!, Mi nombre es lia, me comunico con {name}?.
   utter_greet_apolo:
@@ -89,9 +89,9 @@ responses:
   utter_si_paga:
   - text: Muchas gracias por su tiempo {name}. Su pago ha quedado agendado para el {fecha_pago}, le recordamos que puede pagar en triple doble b punto s b pey punto ce ele , La AP Salcobrand y en cualquier Salcobrand o Preunic.​ que tenga un buen dia. | EXIT
   utter_default:
-  - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
+  - text: Lo siento, no entendí lo que dijiste. puede responder con un si o un no?
   utter_default_repetir:
-  - text: Lo siento, no entendí lo que dijiste. ¿Podrías intentarlo de nuevo?
+  - text: Lo siento, no entendí lo que dijiste. puede responder con un si o un no?
   utter_disculpe_molestia:
   - text: Disculpe la molestia, que tenga un buen día, Adiós.| EXIT
   utter_despedida:
@@ -150,6 +150,7 @@ actions:
 - utter_ser_transferido
 - utter_si_paga
 - utter_tranfiere
+- action_custom_fallback
 
 forms:
   persona_form:

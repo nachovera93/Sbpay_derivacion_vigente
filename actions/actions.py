@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet, Restarted, AllSlotsReset
+from rasa_sdk.events import SlotSet, Restarted, AllSlotsReset, UserUtteranceReverted
 import pymongo
 global SiPaga
 global NoPaga
@@ -416,41 +416,49 @@ class ActionSlotReset(Action):
 
 
 
-class ActionRepeatLastQuestion(Action):
 
-    def name(self) -> Text:
-        return "action_repeat_last_question"
+from rasa_sdk.events import UserUtteranceReverted, ActionReverted
+from rasa_sdk.executor import CollectingDispatcher
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        last_bot_utterance = None
-        print("Repetir accion anterior")
-        for event in reversed(tracker.events):
-            if event.get("event") == "bot":
-                last_bot_utterance = event.get("text")
-                break
-
-        if last_bot_utterance:
-            dispatcher.utter_message(text=last_bot_utterance)
-        else:
-            dispatcher.utter_message(text="Lo siento, no tengo información sobre la última pregunta.")
-
-        return []
-
-
-class ActionFallback(Action):
-
+class CustomFallbackAction(Action):
     def name(self) -> Text:
         return "action_default_fallback"
 
-    async def run(
-        self,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: Dict[Text, Any],
-    ) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Aquí puedes personalizar el mensaje predeterminado
+        message = "Lo siento, no comprendí tu mensaje."
+        print("action_default_fallback")
+        # Envía el mensaje al usuario
+        dispatcher.utter_message(text=message)
 
-        # Obtener la intención predicha
-        predicted_intent = tracker.latest_message['intent']['name']
+        # Agrega los eventos UserUtteranceReverted y ActionReverted para deshacer la acción de fallback
+        return [UserUtteranceReverted(), ActionReverted()]
+#class ActionFallback(Action):
+#
+#    def name(self) -> Text:
+#        return "action_default_fallback"
+#
+#    async def run(
+#        self,
+#        dispatcher: CollectingDispatcher,
+#        tracker: Tracker,
+#        domain: Dict[Text, Any],
+#    ) -> List[Dict[Text, Any]]:
+#
+#        # Obtener la intención predicha
+#        predicted_intent = tracker.latest_message['intent']['name']
+#
+#        # Establecer la ranura 'predicted_intent' con la intención predicha
+#        return [SlotSet("predicted_intent", predicted_intent)]
 
-        # Establecer la ranura 'predicted_intent' con la intención predicha
-        return [SlotSet("predicted_intent", predicted_intent)]
+
+#class ActionCustomFallback(Action):
+#    def name(self) -> str:
+#        return "action_custom_fallback"
+#
+#    def run(self, dispatcher, tracker, domain):
+#        dispatcher.utter_message(text="Lo siento, no entendí eso. ¿Podrías reformularlo o proporcionar más detalles?")
+#        return [UserUtteranceReverted()]

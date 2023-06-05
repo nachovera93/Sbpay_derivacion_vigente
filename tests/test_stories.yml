@@ -1,91 +1,626 @@
-#### This file contains tests to evaluate that your bot behaves as expected.
-#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
 
 stories:
-- story: happy path 1
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
 
-- story: happy path 2
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
+  
+  
+  - story: interactive_story_1
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_no_conoce
+    - action: action_save_data
+    - action: action_restart2
 
-- story: sad path 1
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
+  
+  - story: interactive_story_1_unlike_2
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: saludos
+    - action: utter_greet
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_no_conoce
+    - action: action_save_data
+    - action: action_restart2
+  
 
-- story: sad path 2
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
-  - action: utter_goodbye
+  #- story: interactive_story_1
+  #  steps:
+  #  - intent: saludos
+  #  - action: action_slot_reset
+  #  - action: set_name_action
+  #  - slot_was_set:
+  #    - name: Jose Miguel
+  #  - slot_was_set:
+  #    - fecha_vcto: 01-01-1979
+  #  - slot_was_set:
+  #    - monto: '10000'
+  #  - action: utter_greet
+  #  - intent: preguntar_monto_deuda
+  #  - intent: nlu_fallback
+  
+  #- story: interactive_story_2
+  #  steps:
+  #  - intent: saludos
+  #  - action: action_slot_reset
+  #  - action: set_name_action
+  #  - slot_was_set:
+  #    - name: Jose Miguel
+  #  - slot_was_set:
+  #    - fecha_vcto: 01-01-1979
+  #  - slot_was_set:
+  #    - monto: '10000'
+  #  - action: utter_greet
+  #  - intent: eres_humano
+  #  - action: utter_bot
+  #  - action: utter_greet_apolo
+  #  - intent: afirmación
+  #    entities:
+  #    - respuesta: si
+  #  - action: persona_form
+  #  - active_loop: persona_form
+  #  - slot_was_set:
+  #    - es_persona_correcta: si
+  #  - slot_was_set:
+  #    - requested_slot: null
+  #  - active_loop: null
+  #  - action: action_es_o_no
+  #  - action: utter_ask_question
+  
+  - story: interactive_story_3
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: saludos
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: diga
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: diga
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - slot_was_set:
+      - fecha_pago: '2023-03-24'
+    - action: action_save_intent_paga_o_no
+    - action: action_si_paga
+    - action: utter_si_paga
+    - action: action_save_data
+    - action: action_restart2
 
-- story: sad path 3
-  steps:
-  - user: |
-      hi
-    intent: greet
-  - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
-  - action: utter_goodbye
+  - story: interactive_story_1
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_si_paga
+    - action: action_save_intent_paga_o_no
+    - action: utter_si_paga
+    - action: action_save_data
+    - action: action_restart2
 
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
 
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
-    intent: bot_challenge
-  - action: utter_iamabot
+  - story: sin razon
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+  - story: cesante
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: estoy_cesante_intent
+      entities:
+      - motivo: cesante
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+
+  #- story: fallback
+  #  steps:
+  #  - action: utter_ask_question
+  #  - intent: negación
+  #    entities:
+  #    - respuesta: no
+  #  - action: paga_form
+  #  - active_loop: paga_form
+  #  - slot_was_set:
+  #    - paga_o_no: no
+  #  - slot_was_set:
+  #    - requested_slot: null
+  #  - active_loop: null
+  #  - action: action_save_intent_paga_o_no
+  #  - action: utter_no_paga
+  #  - intent: nlu_fallback
+  #  - action: action_razon_no_pago
+  # 
+
+  - story: sin dinero
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: sin_dinero_intent
+      entities:
+      - motivo: sin plata
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+  - story: sin razón
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: negación
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+    
+  - story: estoy enfermo
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: estoy_enfermo_intent
+      entities:
+      - motivo: estoy enfermo
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+  - story: no puede
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: no_puedo_intent
+      entities:
+      - motivo: no podré
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+  
+  - story: no quiero
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: no_quiero_intent
+      entities:
+      - motivo: no quiero
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+
+  - story: ya pagó
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: ya_pagué_intent
+      entities:
+      - motivo: ya pague
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+
+  - story: Desconoce seguro
+    steps:
+    - intent: saludos
+    - action: action_slot_reset
+    - action: set_name_action
+    - slot_was_set:
+      - name: Jose Miguel
+    - slot_was_set:
+      - fecha_vcto: 01-01-1979
+    - slot_was_set:
+      - monto: '10000'
+    - action: utter_greet
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: persona_form
+    - active_loop: persona_form
+    - slot_was_set:
+      - es_persona_correcta: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_es_o_no
+    - action: utter_ask_question
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: desconoce_seguro_intent
+      entities:
+      - motivo: no contrate seguro
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+
+  - story: utter_ask_question__2
+    steps:
+    - action: utter_ask_question2
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: sin_dinero_intent
+      entities:
+      - motivo: sin plata
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
+
+  - story: utter_ask_question__2_afirmtaivo
+    steps:
+    - action: utter_ask_question2
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_si_paga
+    - action: action_save_intent_paga_o_no
+    - action: utter_si_paga
+    - action: action_save_data
+    - action: action_restart2
+
+  
+  

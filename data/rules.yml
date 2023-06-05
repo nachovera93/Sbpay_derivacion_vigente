@@ -49,10 +49,10 @@ rules:
 
 
 
-  #- rule: fallback2
-  #  steps:
-  #    - intent: nlu_fallback
-  #    - action: utter_default_repetir
+  - rule: fallback2
+    steps:
+      - intent: nlu_fallback
+      - action: utter_default_repetir
 
   #- rule: Repetir la última pregunta cuando no se entiende la respuesta
   #  condition:
@@ -63,10 +63,11 @@ rules:
   #  - intent: ANY  # Agrega esta línea
   #  - action: action_listen  # Agrega esta línea
 #
-  - rule: Repetir la última pregunta cuando no se entiende la respuesta
-    steps:
-      - intent: nlu_fallback
-      - action: utter_out_of_scope
+  #- rule: Revertir los eventos de fallback
+  #  steps:
+  #    - intent: nlu_fallback
+  #    - action: action_revert_fallback_events
+  #    - action: utter_out_of_scope 
 
 
   - rule: eres bot1?
@@ -235,24 +236,18 @@ rules:
 
   - rule: cuanto
     steps:
-      - action: utter_ask_question
       - intent: preguntar_monto_deuda
       - action: utter_monto
       - action: utter_ask_question_2
 
   - rule: cuando 
     steps:
-      - action: utter_ask_question
       - intent: cuando
       - action: utter_cuando
       - action: utter_ask_question_2
 
    
-  - rule: despedida
-    steps:
-      - intent: despedida
-      - action: utter_despedida
-      - action: action_restart2  
+ 
 
  
   

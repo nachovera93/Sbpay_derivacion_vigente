@@ -583,7 +583,45 @@ stories:
     - action: utter_ser_transferido
 
 
+  - story: utter_ask_question__2
+    steps:
+    - action: utter_ask_question2
+    - intent: negación
+      entities:
+      - respuesta: no
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: no
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_save_intent_paga_o_no
+    - action: utter_no_paga
+    - intent: sin_dinero_intent
+      entities:
+      - motivo: sin plata
+    - action: action_razon_no_pago
+    - action: utter_ser_transferido
 
+  - story: utter_ask_question__2_afirmtaivo
+    steps:
+    - action: utter_ask_question2
+    - intent: afirmación
+      entities:
+      - respuesta: si
+    - action: paga_form
+    - active_loop: paga_form
+    - slot_was_set:
+      - paga_o_no: si
+    - slot_was_set:
+      - requested_slot: null
+    - active_loop: null
+    - action: action_si_paga
+    - action: action_save_intent_paga_o_no
+    - action: utter_si_paga
+    - action: action_save_data
+    - action: action_restart2
 
   
   
